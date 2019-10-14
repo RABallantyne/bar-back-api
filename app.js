@@ -5,17 +5,14 @@ const bars = require("./controllers/bars");
 require("dotenv").config();
 const app = express();
 
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors());
 app.use("/bars", bars);
 
-const port = process.env.PORT;
-if (port == null || port == "") {
-  port = 8000;
-}
+const port = process.env.PORT || 3000;
 
-app.listen(app.get("port"), () => {
+app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
