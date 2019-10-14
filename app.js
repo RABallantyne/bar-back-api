@@ -9,7 +9,10 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(cors());
 
-const port = process.env.DATABASE_URL || 3000;
+const port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
