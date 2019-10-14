@@ -6,3 +6,5 @@ router.get("/", async (req, res) => {
   const bars = await Bar.query();
   res.json(bars);
 });
+
+module.exports = router;
