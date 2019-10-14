@@ -41,6 +41,14 @@ router.post("/:id/products", async (req, res) => {
   res.send(bar);
 });
 
+router.patch("/:id/products/:productId", async (req, res) => {
+  const product = await Product.query().patchAndFetchById(
+    req.params.productId,
+    req.body
+  );
+  res.send(product);
+});
+
 router.delete("/:id", async (req, res) => {
   await Bar.query().deleteById(req.params.id);
   res.redirect("/bars");
