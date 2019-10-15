@@ -3,6 +3,7 @@ exports.up = function(knex) {
     table.increments("id").primary();
     table.string("productName");
     table.string("category");
+    table.string("size");
     table.float("price");
     table.integer("bars_id").references("bars.id");
   });

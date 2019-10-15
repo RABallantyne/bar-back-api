@@ -5,9 +5,9 @@ exports.seed = function(knex) {
     .then(function() {
       // Inserts seed entries
       return knex("bars").insert([
-        { barName: "Bar One" },
-        { barName: "Bar Two" },
-        { barName: "Bar Three" }
+        { barName: "Flatiron Bar" },
+        { barName: "Bobbys Bar" },
+        { barName: "Sloshies" }
       ]);
     });
 };
