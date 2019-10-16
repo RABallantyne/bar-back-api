@@ -1,20 +1,35 @@
 const express = require("express");
 const { Bar, Product } = require("../models/schema");
 const router = express.Router();
+const jwt = require("express-jwt");
+const jwksRsa = require("jwks-rsa");
+
+const checkJwt = jwt({
+  secret: jwksRsa.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/.well-known/jwks.json`
+  }),
+
+  audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+  issuer: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/`,
+  algorithms: ["RS256"]
+});
 
 router.get("/", async (req, res) => {
   const bars = await Bar.query();
   res.json(bars);
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkJwt, async (req, res) => {
   const bar = await Bar.query()
     .findById(req.params.id)
     .eager("products");
   res.json(bar);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", checkJwt, async (req, res) => {
   const newBar = req.body;
 
   const bar = await Bar.query()
@@ -23,7 +38,7 @@ router.post("/", async (req, res) => {
   res.send(bar);
 });
 
-router.get("/:id/products", async (req, res) => {
+router.get("/:id/products", checkJwt, async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
   await bar.$relatedQuery("products");
@@ -31,7 +46,7 @@ router.get("/:id/products", async (req, res) => {
   res.send(bar.products);
 });
 
-router.post("/:id/products", async (req, res) => {
+router.post("/:id/products", checkJwt, async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
   await bar
@@ -41,7 +56,7 @@ router.post("/:id/products", async (req, res) => {
   res.send(bar);
 });
 
-router.patch("/:id/products/:productId", async (req, res) => {
+router.patch("/:id/products/:productId", checkJwt, async (req, res) => {
   const product = await Product.query().patchAndFetchById(
     req.params.productId,
     req.body
@@ -49,12 +64,12 @@ router.patch("/:id/products/:productId", async (req, res) => {
   res.send(product);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkJwt, async (req, res) => {
   await Bar.query().deleteById(req.params.id);
   res.redirect("/bars");
 });
 
-router.delete("/:id/products/:productId", async (req, res) => {
+router.delete("/:id/products/:productId", checkJwt, async (req, res) => {
   await Product.query().deleteById(req.params.productId);
   res.redirect(`/bars/${req.params.id}`);
 });
