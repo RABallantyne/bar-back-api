@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 
 const bars = require("./controllers/bars");
+const products = require("./controllers/products");
 require("dotenv").config();
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(helmet());
 
 app.use("/bars", bars);
+// app.use("/products", products);
 
 const port = process.env.PORT || 3000;
 

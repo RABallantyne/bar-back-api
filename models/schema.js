@@ -2,6 +2,7 @@ const Knex = require("knex");
 const connection = require("../knexfile");
 const { Model } = require("objection");
 const knexConnection = Knex(connection);
+// const Product = require("./product");
 
 Model.knex(knexConnection);
 
@@ -117,4 +118,4 @@ class Bar extends Model {
   }
 }
 
-module.exports = { Bar, Product, Menu, Drink };
+module.exports = { Bar, Menu, Drink, Product };

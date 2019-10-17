@@ -1,5 +1,5 @@
 const express = require("express");
-const { Bar, Product, Menu, Drink } = require("../models/schema");
+const { Bar, Menu, Product, Drink } = require("../models/schema");
 const router = express.Router();
 const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
@@ -86,7 +86,7 @@ router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
   const menu = await Menu.query().findById(req.params.id);
 
   await menu
-    .$relatedQuery("drink")
+    .$relatedQuery("drinks")
     .allowInsert("[drinkName, drinkNote]")
     .insert(req.body);
   res.send(menu);
