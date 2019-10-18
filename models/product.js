@@ -4,11 +4,14 @@ const { Model } = require("objection");
 const knexConnection = Knex(connection);
 
 Model.knex(knexConnection);
+
 class Product extends Model {
   static get tableName() {
     return "products";
   }
   static get relationMappings() {
+    const Bar = require("./bar");
+    const Drink = require("./drink");
     return {
       bar: {
         relation: Model.BelongsToOneRelation,
@@ -24,14 +27,15 @@ class Product extends Model {
         join: {
           from: "products.bars_id",
           through: {
-            from: "products_drinks.products_id",
-            to: "products_drinks.drinks_id"
+            from: "products_drinks.product_id",
+            to: "products_drinks.drink_id",
+            extra: ["quantity"]
           },
-          to: "drinks.id"
+          to: "drinks.menus_id"
         }
       }
     };
   }
 }
 
-module.exports = { Product };
+module.exports = Product;

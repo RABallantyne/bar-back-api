@@ -3,6 +3,7 @@ exports.up = function(knex) {
     table.increments("id").primary();
     table.string("drinkName");
     table.string("drinkNote");
+    table.float("margin");
     table.integer("menus_id").references("menus.id");
   });
 };
