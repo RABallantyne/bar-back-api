@@ -21,17 +21,17 @@ class Product extends Model {
           to: "bars.id"
         }
       },
-      drink: {
+      drinks: {
         relation: Model.ManyToManyRelation,
         modelClass: Drink,
         join: {
-          from: "products.bars_id",
+          from: "products.id",
           through: {
-            from: "products_drinks.product_id",
-            to: "products_drinks.drink_id",
+            from: "products_drinks.products_id",
+            to: "products_drinks.drinks_id",
             extra: ["quantity"]
           },
-          to: "drinks.menus_id"
+          to: "drinks.id"
         }
       }
     };

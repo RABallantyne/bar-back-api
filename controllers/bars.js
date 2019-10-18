@@ -116,7 +116,7 @@ router.get("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
 
   // await drink.$relatedQuery("product");
 
-  res.send(drink.products);
+  res.send(drink);
 });
 
 router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
@@ -124,19 +124,21 @@ router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
 
   await menu
     .$relatedQuery("drinks")
-    .allowInsert("[drinkName, drinkNote]")
+    .allowInsert("[drinkName, drinkNote, margin]")
     .insert(req.body);
   res.send(menu);
 });
-
+//unfuck this! finish productdrink model
 router.post("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
-  console.log("hit");
+  // console.log("hit");
   const drink = await Drink.query().findById(req.params.drinkId);
   const product = await Product.query().findById(req.body.products_id);
 
-  // await drink.$relatedQuery("productss").insert(product, req.body.quantity);
+  await drink
+    .$relatedQuery("products_drinks")
+    .insert({ products_id: req.body.products_id, quantity: req.body.quantity });
 
-  console.log(product, drink);
+  res.send(drink);
 });
 
 module.exports = router;

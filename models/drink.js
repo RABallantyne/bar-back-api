@@ -12,6 +12,7 @@ class Drink extends Model {
   static get relationMappings() {
     const Menu = require("./menu");
     const Product = require("./product");
+    const ProductDrink = require("./ProductDrink");
     return {
       menu: {
         relation: Model.BelongsToOneRelation,
@@ -21,17 +22,25 @@ class Drink extends Model {
           to: "menus.bars_id"
         }
       },
-      product: {
+      products: {
         relation: Model.ManyToManyRelation,
         modelClass: Product,
         join: {
-          from: "drinks.menus_id",
+          from: "drinks.id",
           through: {
-            from: "products_drinks.drink_id",
-            to: "products_drinks.product_id",
+            from: "products_drinks.drinks_id",
+            to: "products_drinks.products_id",
             extra: ["quantity"]
           },
-          to: "products.bars_id"
+          to: "products.id"
+        }
+      },
+      products_drinks: {
+        relation: Model.HasManyRelation,
+        modelClass: ProductDrink,
+        join: {
+          from: "drinks.id",
+          to: "products_drinks.drinks_id"
         }
       }
     };
