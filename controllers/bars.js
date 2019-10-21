@@ -100,21 +100,15 @@ router.get("/:id/menus/:id/", checkJwt, async (req, res) => {
 
   await menu.$relatedQuery("drinks");
 
-  res.send(menu.drinks);
+  res.send(menu);
 });
 
-router.get("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
+router.get("/:barId/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
   const drink = await Drink.query().findById(req.params.drinkId);
+  const bar = await Bar.query().findById(req.params.barId);
+  const menu = await Menu.query().findById(req.params.id);
 
   await drink.$relatedQuery("products");
-  // .joinRelation("[drinks, products]")
-  // .where("products_drinks.drinks_id", req.params.drinkId);
-  //   .joinRelation("product")
-  //   .where("products_drinks.products_id", req.params.drinkId);
-
-  // const menu = await Menu.query().findById(req.params.id);
-
-  // await drink.$relatedQuery("product");
 
   res.send(drink);
 });
@@ -132,7 +126,7 @@ router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
 router.post("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
   // console.log("hit");
   const drink = await Drink.query().findById(req.params.drinkId);
-  const product = await Product.query().findById(req.body.products_id);
+  // const product = await Product.query().findById(req.body.products_id);
 
   await drink
     .$relatedQuery("products_drinks")
