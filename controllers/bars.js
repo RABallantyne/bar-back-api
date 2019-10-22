@@ -6,6 +6,10 @@ const Drink = require("../models/drink");
 const router = express.Router();
 const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
+const cors = require("cors");
+const ProductDrink = require("../models/ProductDrink");
+
+router.use(cors());
 
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
@@ -104,14 +108,26 @@ router.get("/:id/menus/:id/", checkJwt, async (req, res) => {
 });
 
 router.get("/:barId/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
-  const drink = await Drink.query().findById(req.params.drinkId);
-  const bar = await Bar.query().findById(req.params.barId);
-  const menu = await Menu.query().findById(req.params.id);
+  const drink = await Drink.query()
+    .findById(req.params.drinkId)
 
-  await drink.$relatedQuery("products");
+    .eager("[products_drinks, products]");
+  // await drink.$relatedQuery("products_drinks");
 
-  res.send(drink);
+  res.json(drink);
 });
+
+router.patch(
+  "/:barId/menus/:id/drinks/:drinkId",
+  checkJwt,
+  async (req, res) => {
+    const drink = await Drink.query().patchAndFetchById(
+      req.params.drinkId,
+      req.body
+    );
+    res.send(drink);
+  }
+);
 
 router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
   const menu = await Menu.query().findById(req.params.id);
@@ -122,7 +138,7 @@ router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
     .insert(req.body);
   res.send(menu);
 });
-//unfuck this! finish productdrink model
+//unfuck this!
 router.post("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
   // console.log("hit");
   const drink = await Drink.query().findById(req.params.drinkId);
@@ -134,5 +150,18 @@ router.post("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
 
   res.send(drink);
 });
+
+router.delete(
+  "/:id/menus/:id/drinks/:drinkId/:productdrinkId",
+  checkJwt,
+  async (req, res) => {
+    // console.log("hit");
+    const productdrink = await ProductDrink.query().deleteById(
+      req.params.productdrinkId
+    );
+
+    res.json(productdrink);
+  }
+);
 
 module.exports = router;
