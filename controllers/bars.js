@@ -89,6 +89,11 @@ router.get("/:id/menus", checkJwt, async (req, res) => {
   res.send(bar.menus);
 });
 
+router.delete("/:id/menus/:menuId", checkJwt, async (req, res) => {
+  await Menu.query().deleteById(req.params.menuId);
+  res.redirect(`/bars/${req.params.id}`);
+});
+
 router.post("/:id/menus", checkJwt, async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
@@ -112,10 +117,18 @@ router.get("/:barId/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
     .findById(req.params.drinkId)
 
     .eager("[products_drinks, products]");
-  // await drink.$relatedQuery("products_drinks");
 
   res.json(drink);
 });
+
+router.delete(
+  "/:id/menus/:menuId/drinks/:drinkId",
+  checkJwt,
+  async (req, res) => {
+    await Drink.query().deleteById(req.params.drinkId);
+    res.redirect(`/bars/${req.params.id}`);
+  }
+);
 
 router.patch(
   "/:barId/menus/:id/drinks/:drinkId",
@@ -138,11 +151,9 @@ router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
     .insert(req.body);
   res.send(menu);
 });
-//unfuck this!
+
 router.post("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
-  // console.log("hit");
   const drink = await Drink.query().findById(req.params.drinkId);
-  // const product = await Product.query().findById(req.body.products_id);
 
   await drink
     .$relatedQuery("products_drinks")
@@ -155,7 +166,6 @@ router.delete(
   "/:id/menus/:id/drinks/:drinkId/:productdrinkId",
   checkJwt,
   async (req, res) => {
-    // console.log("hit");
     const productdrink = await ProductDrink.query().deleteById(
       req.params.productdrinkId
     );
