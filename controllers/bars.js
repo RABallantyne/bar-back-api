@@ -91,7 +91,7 @@ router.get("/:id/menus", checkJwt, async (req, res) => {
 
 router.delete("/:id/menus/:menuId", checkJwt, async (req, res) => {
   await Menu.query().deleteById(req.params.menuId);
-  res.redirect(`/bars/${req.params.id}`);
+  res.send(`/bars/${req.params.id}/menus`);
 });
 
 router.post("/:id/menus", checkJwt, async (req, res) => {
@@ -126,7 +126,7 @@ router.delete(
   checkJwt,
   async (req, res) => {
     await Drink.query().deleteById(req.params.drinkId);
-    res.redirect(`/bars/${req.params.id}`);
+    res.send(`/bars/${req.params.id}/drinks`);
   }
 );
 
