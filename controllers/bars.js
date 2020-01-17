@@ -93,7 +93,7 @@ router.delete("/:id/menus/:menuId", checkJwt, async (req, res) => {
   await Menu.query().deleteById(req.params.menuId);
   res.send(`/bars/${req.params.id}/menus`);
 });
-
+//need to fix this probably
 router.post("/:id/menus", checkJwt, async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
