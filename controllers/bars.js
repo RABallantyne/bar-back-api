@@ -29,14 +29,17 @@ router.get("/", async (req, res) => {
   res.json(bars);
 });
 
-router.get("/:id", checkJwt, async (req, res) => {
+// removing Jwt for demo, to reinstate add ref to checkJwt above. i.e.:
+// router.get("/:id", checkJwt, async (req, res) => {
+
+router.get("/:id", async (req, res) => {
   const bar = await Bar.query()
     .findById(req.params.id)
     .eager("[products, menus]");
   res.json(bar);
 });
 
-router.post("/", checkJwt, async (req, res) => {
+router.post("/", async (req, res) => {
   const newBar = req.body;
 
   const bar = await Bar.query()
@@ -45,12 +48,12 @@ router.post("/", checkJwt, async (req, res) => {
   res.send(bar);
 });
 
-router.delete("/:id", checkJwt, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   await Bar.query().deleteById(req.params.id);
   res.redirect("/bars");
 });
 
-router.get("/:id/products", checkJwt, async (req, res) => {
+router.get("/:id/products", async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
   await bar.$relatedQuery("products");
@@ -58,7 +61,7 @@ router.get("/:id/products", checkJwt, async (req, res) => {
   res.send(bar.products);
 });
 
-router.post("/:id/products", checkJwt, async (req, res) => {
+router.post("/:id/products", async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
   await bar
@@ -68,7 +71,7 @@ router.post("/:id/products", checkJwt, async (req, res) => {
   res.send(bar);
 });
 
-router.patch("/:id/products/:productId", checkJwt, async (req, res) => {
+router.patch("/:id/products/:productId", async (req, res) => {
   const product = await Product.query().patchAndFetchById(
     req.params.productId,
     req.body
@@ -76,12 +79,12 @@ router.patch("/:id/products/:productId", checkJwt, async (req, res) => {
   res.send(product);
 });
 
-router.delete("/:id/products/:productId", checkJwt, async (req, res) => {
+router.delete("/:id/products/:productId", async (req, res) => {
   await Product.query().deleteById(req.params.productId);
   res.redirect(`/bars/${req.params.id}`);
 });
 
-router.get("/:id/menus", checkJwt, async (req, res) => {
+router.get("/:id/menus", async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
   await bar.$relatedQuery("menus");
@@ -89,12 +92,12 @@ router.get("/:id/menus", checkJwt, async (req, res) => {
   res.send(bar.menus);
 });
 
-router.delete("/:id/menus/:menuId", checkJwt, async (req, res) => {
+router.delete("/:id/menus/:menuId", async (req, res) => {
   await Menu.query().deleteById(req.params.menuId);
   res.send(`/bars/${req.params.id}/menus`);
 });
 //need to fix this probably
-router.post("/:id/menus", checkJwt, async (req, res) => {
+router.post("/:id/menus", async (req, res) => {
   const bar = await Bar.query().findById(req.params.id);
 
   await bar
@@ -104,7 +107,7 @@ router.post("/:id/menus", checkJwt, async (req, res) => {
   res.send(bar);
 });
 
-router.get("/:id/menus/:id/", checkJwt, async (req, res) => {
+router.get("/:id/menus/:id/", async (req, res) => {
   const menu = await Menu.query().findById(req.params.id);
 
   await menu.$relatedQuery("drinks");
@@ -112,7 +115,7 @@ router.get("/:id/menus/:id/", checkJwt, async (req, res) => {
   res.send(menu);
 });
 
-router.get("/:barId/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
+router.get("/:barId/menus/:id/drinks/:drinkId", async (req, res) => {
   const drink = await Drink.query()
     .findById(req.params.drinkId)
 
@@ -123,7 +126,7 @@ router.get("/:barId/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
 
 router.delete(
   "/:id/menus/:menuId/drinks/:drinkId",
-  checkJwt,
+
   async (req, res) => {
     await Drink.query().deleteById(req.params.drinkId);
     res.send(`/bars/${req.params.id}/drinks`);
@@ -132,7 +135,7 @@ router.delete(
 
 router.patch(
   "/:barId/menus/:id/drinks/:drinkId",
-  checkJwt,
+
   async (req, res) => {
     const drink = await Drink.query().patchAndFetchById(
       req.params.drinkId,
@@ -142,7 +145,7 @@ router.patch(
   }
 );
 
-router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
+router.post("/:id/menus/:id/drinks", async (req, res) => {
   const menu = await Menu.query().findById(req.params.id);
 
   await menu
@@ -152,7 +155,7 @@ router.post("/:id/menus/:id/drinks", checkJwt, async (req, res) => {
   res.send(menu);
 });
 
-router.post("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
+router.post("/:id/menus/:id/drinks/:drinkId", async (req, res) => {
   const drink = await Drink.query().findById(req.params.drinkId);
 
   await drink
@@ -164,7 +167,7 @@ router.post("/:id/menus/:id/drinks/:drinkId", checkJwt, async (req, res) => {
 
 router.delete(
   "/:id/menus/:id/drinks/:drinkId/:productdrinkId",
-  checkJwt,
+
   async (req, res) => {
     const productdrink = await ProductDrink.query().deleteById(
       req.params.productdrinkId
